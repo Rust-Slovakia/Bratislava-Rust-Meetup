@@ -23,13 +23,18 @@ Radi si vypočujeme Váš názor!
 
 ## Ďalšie stretnutia
 
-Budú ohlásené.
+Budú ohlásené prostredníctvom platformy [Meetup](https://www.meetup.com/bratislava-rust-meetup-group/).
 
 ## Stretnutia
 
-### Initial meet and greet Rust Meetup
+### [7. 3. 2023 Rust Meetup by Sonalake](https://www.meetup.com/bratislava-rust-meetup-group/events/291657555/)
 
-Kde: Nivy Tower 6th floor
+Kde: Nivy Tower, 6. poschodie
+Prezentácia: [Starting with Rust Idioms](https://github.com/Rust-Slovakia/Bratislava-Rust-Meetup/blob/main/past_talks/2023-03-07-rust-idioms)
+
+### [23.11. 2023: Initial meet and greet Rust Meetup](https://www.meetup.com/bratislava-rust-meetup-group/events/289028178/)
+
+Kde: Nivy Tower, 6. poschodie
 
 ## Odkazy
 
@@ -41,3 +46,5 @@ Repository with information about the Bratislava Rust Meetup group.
 
 We're a local group and our meetups are conducted in Slovak language. We'd be
 happy to be in touch with you even if you don't understand Slovak.
+
+Feel free to take a peek into the [past_talks](https://github.com/Rust-Slovakia/Bratislava-Rust-Meetup/blob/main/past_talks/) folder to see what we're about.
