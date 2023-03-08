@@ -1,0 +1,906 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Tomáš Jašek" />
+  <title>Starting with Rust Idioms</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        background-color: #232629;
+        color: #7a7c7d;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #7a7c7d;  padding-left: 4px; }
+    div.sourceCode
+      { color: #ffffff; background-color: #262e32; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #cfcfc2; } /* Normal */
+    code span.al { color: #95da4c; background-color: #4d1f24; font-weight: bold; } /* Alert */
+    code span.an { color: #3f8058; } /* Annotation */
+    code span.at { color: #2980b9; } /* Attribute */
+    code span.bn { color: #f67400; } /* BaseN */
+    code span.bu { color: #ffffff; } /* BuiltIn */
+    code span.cf { color: #00ffff; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #3daee9; } /* Char */
+    code span.cn { color: #00af00; font-weight: bold; } /* Constant */
+    code span.co { color: #7a7c7d; } /* Comment */
+    code span.cv { color: #7f8c8d; } /* CommentVar */
+    code span.do { color: #a43340; } /* Documentation */
+    code span.dt { color: #ffffff; } /* DataType */
+    code span.dv { color: #f67400; } /* DecVal */
+    code span.er { color: #005fff; text-decoration: underline; } /* Error */
+    code span.ex { color: #0099ff; font-weight: bold; } /* Extension */
+    code span.fl { color: #f67400; } /* Float */
+    code span.fu { color: #005fff; } /* Function */
+    code span.im { color: #27ae60; } /* Import */
+    code span.in { color: #c45b00; } /* Information */
+    code span.kw { color: #00ffff; font-weight: bold; } /* Keyword */
+    code span.op { color: #cfcfc2; } /* Operator */
+    code span.ot { color: #27ae60; } /* Other */
+    code span.pp { color: #ffffff; } /* Preprocessor */
+    code span.re { color: #2980b9; background-color: #153042; } /* RegionMarker */
+    code span.sc { color: #3daee9; } /* SpecialChar */
+    code span.ss { color: #da4453; } /* SpecialString */
+    code span.st { color: #00ff00; } /* String */
+    code span.va { color: #005fff; } /* Variable */
+    code span.vs { color: #da4453; } /* VerbatimString */
+    code span.wa { color: #da4453; } /* Warning */
+  </style>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+    href="https://www.w3.org/Talks/Tools/Slidy2/styles/slidy.css" />
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+   href="./slidy_black.css" />
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css" />
+  <script src="https://www.w3.org/Talks/Tools/Slidy2/scripts/slidy.js"
+    charset="utf-8" type="text/javascript"></script>
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">Starting with Rust Idioms</h1>
+  <p class="author">
+Tomáš Jašek
+  </p>
+  <p class="date">March 7, 2023</p>
+</div>
+<div id="tomáš-jašek" class="slide section level1">
+<h1>Tomáš Jašek</h1>
+<ul>
+<li>Rust backend engineer at <a
+href="https://sonalake.com">Sonalake</a></li>
+<li><a
+href="https://sk.linkedin.com/in/tomáš-jašek-4417abb8">LinkedIn</a>, <a
+href="https://github.com/tomsik68">Github</a></li>
+</ul>
+</div>
+<div id="idiom" class="slide section level1">
+<h1>Idiom</h1>
+<p>Wikipedia:</p>
+<blockquote>
+<p>group of code fragments sharing an equivalent semantic role which
+recurs frequently across software projects</p>
+</blockquote>
+</div>
+<div id="why" class="slide section level1">
+<h1>Why?</h1>
+<ul>
+<li>reduce cognitive overhead</li>
+<li>simplify code review</li>
+<li>increase likelyhood of spotting mistakes</li>
+<li>compiler may focus its optimizations on idiomatic code</li>
+</ul>
+</div>
+<div id="groups-of-idioms-to-be-discussed" class="slide section level1">
+<h1>Groups of Idioms to be Discussed</h1>
+<ol style="list-style-type: decimal">
+<li>Functional approach with Option &amp; Result</li>
+<li>Iterator</li>
+<li>Type Conversions</li>
+</ol>
+</div>
+<div id="part-1-functional-approach-with-option-result"
+class="slide section level1">
+<h1>Part 1: Functional Approach with Option &amp; Result</h1>
+</div>
+<div id="part-1-functional-approach-with-option-result-1"
+class="slide section level1">
+<h1>Part 1: Functional Approach with Option &amp; Result</h1>
+<h2 id="introduction">Introduction</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="kw">enum</span> <span class="dt">Option</span><span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>    <span class="cn">Some</span>(T)<span class="op">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>    <span class="cn">None</span><span class="op">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="kw">enum</span> <span class="dt">Result</span><span class="op">&lt;</span>T<span class="op">,</span> E<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>    <span class="cn">Ok</span>(T)<span class="op">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>    <span class="cn">Err</span>(E)<span class="op">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="part-1-functional-approach-with-option-result-2"
+class="slide section level1">
+<h1>Part 1: Functional Approach with Option &amp; Result</h1>
+<h2 id="motivating-example">Motivating Example</h2>
+<ul>
+<li>implement
+<code>fn (Request) -&gt; parse::Result&lt;String&gt;</code></li>
+<li>if parsing failed, return error</li>
+<li>if parseable_user or display_name is not present, return empty
+string</li>
+</ul>
+<div class="columns">
+<div class="left">
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="kw">struct</span> Request <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>    parseable_user<span class="op">:</span> <span class="dt">Option</span><span class="op">&lt;</span>ParseableUser<span class="op">&gt;,</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="kw">struct</span> ParseableUser <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="kw">impl</span> ParseableUser <span class="op">{</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>    <span class="kw">fn</span> parse(<span class="kw">self</span>) <span class="op">-&gt;</span> <span class="pp">parse::</span><span class="dt">Result</span><span class="op">&lt;</span>User<span class="op">&gt;</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div><div class="right">
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="kw">struct</span> User <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>    display_name<span class="op">:</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;,</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">mod</span> parse <span class="op">{</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">struct</span> <span class="bu">Error</span><span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">type</span> Result<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">=</span> <span class="dt">Result</span><span class="op">&lt;</span>T<span class="op">,</span> <span class="bu">Error</span><span class="op">&gt;;</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="part-1-functional-approach-with-option-result-3"
+class="slide section level1">
+<h1>Part 1: Functional Approach with Option &amp; Result</h1>
+<h2 id="possible-solution">Possible Solution</h2>
+<ul>
+<li>implement
+<code>fn (Request) -&gt; parse::Result&lt;String&gt;</code></li>
+<li>if parsing failed, return error</li>
+<li>if parseable_user or display_name is not present, return empty
+string</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> get_user_display_name(req<span class="op">:</span> Request) <span class="op">-&gt;</span> <span class="dt">Result</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">let</span> <span class="cn">Some</span>(parseable_user) <span class="op">=</span> req<span class="op">.</span>parseable_user <span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">let</span> <span class="cn">Ok</span>(user) <span class="op">=</span> parseable_user<span class="op">.</span>parse() <span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">let</span> <span class="cn">Some</span>(display_name) <span class="op">=</span> user<span class="op">.</span>display_name <span class="op">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>                <span class="cn">Ok</span>(display_name)</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>                <span class="cn">Ok</span>(<span class="st">&quot;&quot;</span><span class="op">.</span>to_string())</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>            <span class="cn">Err</span>(<span class="pp">parse::</span><span class="bu">Error</span> <span class="op">{}</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>        <span class="cn">Ok</span>(<span class="st">&quot;&quot;</span><span class="op">.</span>to_string())</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="part-1-functional-approach-with-option-result-4"
+class="slide section level1">
+<h1>Part 1: Functional Approach with Option &amp; Result</h1>
+<h2 id="towards-functional-approach">Towards functional Approach</h2>
+<ul>
+<li>implement
+<code>fn (Request) -&gt; parse::Result&lt;String&gt;</code></li>
+<li>if parsing failed, return error</li>
+<li>if parseable_user or display_name is not present, return empty
+string</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> get_user_display_name(req<span class="op">:</span> Request) <span class="op">-&gt;</span> <span class="dt">Result</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">let</span> <span class="cn">Some</span>(parseable_user) <span class="op">=</span> req<span class="op">.</span>parseable_user <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">let</span> <span class="cn">Ok</span>(user) <span class="op">=</span> parseable_user<span class="op">.</span>parse() <span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>            <span class="cn">Ok</span>(user<span class="op">.</span>display_name<span class="op">.</span>unwrap_or(<span class="st">&quot;&quot;</span><span class="op">.</span>to_string()))</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>            <span class="cn">Err</span>(<span class="pp">parse::</span><span class="bu">Error</span> <span class="op">{}</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>        <span class="cn">Ok</span>(<span class="st">&quot;&quot;</span><span class="op">.</span>to_string())</span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><a
+href="https://doc.rust-lang.org/std/option/enum.Option.html#method.unwrap_or"><code>Option::unwrap_or</code></a></p>
+</div>
+<div id="part-1-functional-approach-with-option-result-5"
+class="slide section level1">
+<h1>Part 1: Functional Approach with Option &amp; Result</h1>
+<h2 id="practically-readable-functional-approach">“Practically readable”
+functional approach</h2>
+<ul>
+<li>implement
+<code>fn (Request) -&gt; parse::Result&lt;String&gt;</code></li>
+<li>if parsing failed, return error</li>
+<li>if parseable_user or display_name is not present, return empty
+string</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> get_user_display_name(req<span class="op">:</span> Request) <span class="op">-&gt;</span> <span class="dt">Result</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">let</span> <span class="cn">Some</span>(parseable_user) <span class="op">=</span> req<span class="op">.</span>parseable_user <span class="op">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>        <span class="kw">let</span> user <span class="op">=</span> parseable_user<span class="op">.</span>parse()<span class="op">?;</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>        <span class="cn">Ok</span>(user<span class="op">.</span>display_name<span class="op">.</span>unwrap_or(<span class="st">&quot;&quot;</span><span class="op">.</span>to_string()))</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>        <span class="cn">Ok</span>(<span class="st">&quot;&quot;</span><span class="op">.</span>to_string())</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><a
+href="https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html?highlight=question%20mark#propagating-errors">question
+mark</a></p>
+</div>
+<div id="part-1-functional-approach-with-option-result-6"
+class="slide section level1">
+<h1>Part 1: Functional Approach with Option &amp; Result</h1>
+<h2 id="bonus-fully-functional-approach">Bonus: Fully functional
+approach</h2>
+<ul>
+<li>implement
+<code>fn (Request) -&gt; parse::Result&lt;String&gt;</code></li>
+<li>if parsing failed, return error</li>
+<li>if parseable_user or display_name is not present, return empty
+string</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> get_user_display_name(req<span class="op">:</span> Request) <span class="op">-&gt;</span> <span class="dt">Result</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>    <span class="cn">Ok</span>(req</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>        <span class="op">.</span>parseable_user</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>        <span class="op">.</span>map(<span class="op">|</span>pu<span class="op">|</span> pu<span class="op">.</span>parse())</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>        <span class="op">.</span>transpose()<span class="op">?</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>        <span class="op">.</span>and_then(<span class="op">|</span>u<span class="op">|</span> u<span class="op">.</span>display_name)</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>        <span class="op">.</span>unwrap_or(<span class="st">&quot;&quot;</span><span class="op">.</span>to_string()))</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Important: does this reduce cognitive overhead for your
+team?</strong></p>
+<ul>
+<li><a
+href="https://doc.rust-lang.org/std/option/enum.Option.html#method.map"><code>Option::map</code></a></li>
+<li><a
+href="https://doc.rust-lang.org/std/option/enum.Option.html#method.transpose"><code>Option::transpose</code></a></li>
+<li><a
+href="https://doc.rust-lang.org/std/option/enum.Option.html#method.and_then"><code>Option::and_then</code></a></li>
+<li><a
+href="https://doc.rust-lang.org/std/option/enum.Option.html#method.unwrap_or"><code>Option::unwrap_or</code></a></li>
+</ul>
+</div>
+<div id="part-2-iterator" class="slide section level1">
+<h1>Part 2: Iterator</h1>
+</div>
+<div id="part-2-iterator-1" class="slide section level1">
+<h1>Part 2: Iterator</h1>
+<h2 id="introduction-1">Introduction</h2>
+<ul>
+<li>returns elements of a collection, allows transforming them</li>
+<li>iterators usually implement <a
+href="https://doc.rust-lang.org/std/iter/trait.Iterator.html"><code>std::iter::Iterator</code></a></li>
+<li>collection to iterator
+<ul>
+<li><a
+href="https://doc.rust-lang.org/std/iter/trait.IntoIterator.html#tymethod.into_iter"><code>std::iter::IntoIterator::into_iter</code></a>
+- consumes a collection</li>
+<li>alternative: <code>iter()</code> - an immutable reference to an
+element</li>
+<li>alternative: <code>iter_mut()</code> - a mutable reference to an
+element</li>
+</ul></li>
+<li>iterator to collection
+<ul>
+<li><a
+href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect"><code>std::iter::Iterator::collect</code></a></li>
+</ul></li>
+<li>antipattern: <code>vec.iter().collect().iter().collect()</code>
+<ul>
+<li><strong>only use collect to store new collection into
+memory!</strong></li>
+<li>intermediate results should be passed as iterators</li>
+</ul></li>
+</ul>
+</div>
+<div id="part-2-iterator-2" class="slide section level1">
+<h1>Part 2: Iterator</h1>
+<h2 id="antipattern-iter---collect---iter---collect">Antipattern: iter
+-&gt; collect -&gt; iter -&gt; collect</h2>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> get_nonempty(vec<span class="op">:</span> <span class="op">&amp;</span><span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="dt">Vec</span><span class="op">&lt;&amp;</span><span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>    vec<span class="op">.</span>iter()<span class="op">.</span>filter(<span class="op">|</span>x<span class="op">|</span> <span class="op">!</span>x<span class="op">.</span>is_empty())<span class="op">.</span>collect()</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="kw">fn</span> transform_vec(vec<span class="op">:</span> <span class="op">&amp;</span><span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    get_nonempty(vec)</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>        <span class="op">.</span>iter()</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>        <span class="op">.</span>map(<span class="op">|</span>x<span class="op">|</span> <span class="pp">format!</span>(<span class="st">&quot;{} &quot;</span><span class="op">,</span> x))</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>        <span class="op">.</span>collect()</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="kw">let</span> vec <span class="op">=</span> <span class="pp">vec!</span>[]<span class="op">;</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="kw">let</span> vec <span class="op">=</span> transform_vec(<span class="op">&amp;</span>vec)<span class="op">;</span></span></code></pre></div>
+</div>
+<div id="part-2-iterator-3" class="slide section level1">
+<h1>Part 2: Iterator</h1>
+<h2 id="antipattern-fix-iter---collect---iter---collect">Antipattern
+FIX: iter -&gt; collect -&gt; iter -&gt; collect</h2>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> get_nonempty(vec<span class="op">:</span> <span class="op">&amp;</span><span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="kw">impl</span> <span class="bu">Iterator</span><span class="op">&lt;</span>Item <span class="op">=</span> <span class="op">&amp;</span><span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>    vec<span class="op">.</span>iter()<span class="op">.</span>filter(<span class="op">|</span>x<span class="op">|</span> <span class="op">!</span>x<span class="op">.</span>is_empty())</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="kw">fn</span> transform_vec(vec<span class="op">:</span> <span class="op">&amp;</span><span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>    get_nonempty(vec)</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>        <span class="op">.</span>map(<span class="op">|</span>x<span class="op">|</span> <span class="pp">format!</span>(<span class="st">&quot;{} &quot;</span><span class="op">,</span> x))</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>        <span class="op">.</span>collect()</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="kw">let</span> vec <span class="op">=</span> <span class="pp">vec!</span>[]<span class="op">;</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="kw">let</span> vec <span class="op">=</span> transform_vec(<span class="op">&amp;</span>vec)<span class="op">;</span></span></code></pre></div>
+</div>
+<div id="part-2-iterator-4" class="slide section level1">
+<h1>Part 2: Iterator</h1>
+<h2 id="example-1-contest-results">Example 1: Contest results</h2>
+<p>Prepare results sheet for a <code>Contest</code>. For each
+contestant, print their score and their name.</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="kw">struct</span> Contestant <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>    name<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>    score<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="kw">struct</span> Country <span class="op">{</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>    name<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>    contestants<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span>Contestant<span class="op">&gt;,</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="kw">struct</span> Contest <span class="op">{</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>    countries<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span>Country<span class="op">&gt;,</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="part-2-iterator-5" class="slide section level1">
+<h1>Part 2: Iterator</h1>
+<h2 id="example-1-contest-results-1">Example 1: Contest results</h2>
+<p>Prepare results sheet for a <code>Contest</code>. For each
+contestant, print their score and their name.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="kw">fn</span> results_list(contest<span class="op">:</span> Contest) <span class="op">-&gt;</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> result <span class="op">=</span> <span class="pp">vec!</span>[]<span class="op">;</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    <span class="cf">for</span> country <span class="kw">in</span> <span class="op">&amp;</span>contest<span class="op">.</span>countries <span class="op">{</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>        <span class="cf">for</span> contestant <span class="kw">in</span> <span class="op">&amp;</span>country<span class="op">.</span>contestants <span class="op">{</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>            result<span class="op">.</span>push(<span class="pp">format!</span>(<span class="st">&quot;{} | {}&quot;</span><span class="op">,</span> contestant<span class="op">.</span>score<span class="op">,</span> contestant<span class="op">.</span>name))<span class="op">;</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>    result</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="part-2-iterator-6" class="slide section level1">
+<h1>Part 2: Iterator</h1>
+<h2 id="example-1-contest-results-2">Example 1: Contest results</h2>
+<p>Prepare results sheet for a <code>Contest</code>. For each
+contestant, print their score and their name.</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="kw">fn</span> results_list(contest<span class="op">:</span> Contest) <span class="op">-&gt;</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> result <span class="op">=</span> <span class="pp">vec!</span>[]<span class="op">;</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>    <span class="kw">let</span> contestants <span class="op">=</span> contest<span class="op">.</span>countries<span class="op">.</span>iter()<span class="op">.</span>flat_map(<span class="op">|</span>country<span class="op">|</span> country<span class="op">.</span>contestants)<span class="op">;</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>    <span class="cf">for</span> contestant <span class="kw">in</span> contestants <span class="op">{</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>        result<span class="op">.</span>push(<span class="pp">format!</span>(<span class="st">&quot;{} | {}&quot;</span><span class="op">,</span> contestant<span class="op">.</span>score<span class="op">,</span> contestant<span class="op">.</span>name))<span class="op">;</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>    result</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Idiom: <a
+href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.flat_map"><code>Iterator::flat_map</code></a></p>
+<p>Notice: hybrid approach – prepare elements in functional way, iterate
+using <code>for</code></p>
+</div>
+<div id="part-2-iterator-7" class="slide section level1">
+<h1>Part 2: Iterator</h1>
+<h2 id="example-1-contest-results-3">Example 1: Contest results</h2>
+<p>Prepare results sheet for a <code>Contest</code>. For each
+contestant, print their score and their name.</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="kw">fn</span> results_list(contest<span class="op">:</span> Contest) <span class="op">-&gt;</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>    contest<span class="op">.</span>countries</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>        <span class="op">.</span>iter()</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>        <span class="op">.</span>flat_map(<span class="op">|</span>country<span class="op">|</span> country<span class="op">.</span>contestants<span class="op">.</span>iter())</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>        <span class="op">.</span>map(<span class="op">|</span>contestant<span class="op">|</span> <span class="pp">format!</span>(<span class="st">&quot;{} | {}&quot;</span><span class="op">,</span> <span class="op">&amp;</span>contestant<span class="op">.</span>score<span class="op">,</span> <span class="op">&amp;</span>contestant<span class="op">.</span>name))</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>        <span class="op">.</span>collect()</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Idiom: <a
+href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect"><code>Iterator::collect</code></a></p>
+</div>
+<div id="part-2-iterator-8" class="slide section level1">
+<h1>Part 2: Iterator</h1>
+<h2 id="example-1-contest-results-4">Example 1: Contest results</h2>
+<p>Prepare results sheet for a <code>Contest</code>. For each
+contestant, print their score and their name.</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="kw">fn</span> results_list(contest<span class="op">:</span> Contest) <span class="op">-&gt;</span> <span class="kw">impl</span> <span class="bu">Iterator</span><span class="op">&lt;</span>Item <span class="op">=</span> <span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>    contest<span class="op">.</span>countries</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>        <span class="op">.</span>iter()</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>        <span class="op">.</span>flat_map(<span class="op">|</span>country<span class="op">|</span> country<span class="op">.</span>contestants<span class="op">.</span>iter())</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>        <span class="op">.</span>map(<span class="op">|</span>contestant<span class="op">|</span> <span class="pp">format!</span>(<span class="st">&quot;{} | {}&quot;</span><span class="op">,</span> <span class="op">&amp;</span>contestant<span class="op">.</span>score<span class="op">,</span> <span class="op">&amp;</span>contestant<span class="op">.</span>name))</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Idiom: <a
+href="https://depth-first.com/articles/2020/06/22/returning-rust-iterators/">return
+iterator</a></p>
+</div>
+<div id="part-2-iterator-9" class="slide section level1">
+<h1>Part 2: Iterator</h1>
+<h2 id="example-2-matrix-transpose">Example 2: Matrix transpose</h2>
+<p>Given a matrix <span class="math inline">A = (a_{i,j})</span>,
+produce a transposed matrix. <span class="math inline">A^T = ( a_{j,i}
+)</span>. Example:</p>
+<p><span class="math display">
+\begin{pmatrix}
+1 &amp; 2 &amp; 3 \\
+4 &amp; 5 &amp; 6
+\end{pmatrix} ^T = \begin{pmatrix}
+1 &amp; 4 \\
+2 &amp; 5 \\
+3 &amp; 6
+\end{pmatrix}
+</span></p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="kw">struct</span> Matrix <span class="op">{</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>    rows<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">isize</span><span class="op">&gt;&gt;,</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>    row_count<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>    col_count<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<ul>
+<li>Note: In practice, Matrices are represented using
+<code>Vec&lt;isize&gt;</code> to reduce count of allocations</li>
+</ul>
+</div>
+<div id="part-2-iterator-10" class="slide section level1">
+<h1>Part 2: Iterator</h1>
+<h2 id="example-2-matrix-transpose-1">Example 2: Matrix transpose</h2>
+<p>Given a matrix <span class="math inline">A = (a_{i,j})</span>,
+produce a transposed matrix. <span class="math inline">A^T = ( a_{j,i}
+)</span>.</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="kw">impl</span> Matrix <span class="op">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>    <span class="kw">fn</span> transpose(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">-&gt;</span> Matrix <span class="op">{</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>        <span class="kw">let</span> <span class="kw">mut</span> result <span class="op">=</span> <span class="pp">Matrix::</span>zero(<span class="kw">self</span><span class="op">.</span>col_count<span class="op">,</span> <span class="kw">self</span><span class="op">.</span>row_count)<span class="op">;</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>        <span class="cf">for</span> row <span class="kw">in</span> <span class="dv">0</span><span class="op">..</span><span class="kw">self</span><span class="op">.</span>row_count <span class="op">{</span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>            <span class="cf">for</span> col <span class="kw">in</span> <span class="dv">0</span><span class="op">..</span><span class="kw">self</span><span class="op">.</span>col_count <span class="op">{</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>                result<span class="op">.</span>set_element_at(col<span class="op">,</span> row<span class="op">,</span> <span class="kw">self</span><span class="op">.</span>element_at(row<span class="op">,</span> col))<span class="op">;</span></span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>        result</span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="part-2-iterator-11" class="slide section level1">
+<h1>Part 2: Iterator</h1>
+<h2 id="example-2-matrix-transpose-2">Example 2: Matrix transpose</h2>
+<p>Given a matrix <span class="math inline">A = (a_{i,j})</span>,
+produce a transposed matrix. <span class="math inline">A^T = ( a_{j,i}
+)</span>.</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="kw">impl</span> Matrix <span class="op">{</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>    <span class="kw">fn</span> transpose_iterators(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">-&gt;</span> Matrix <span class="op">{</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>        <span class="kw">let</span> rows <span class="op">=</span> (<span class="dv">0</span><span class="op">..</span><span class="kw">self</span><span class="op">.</span>col_count)</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>            <span class="op">.</span>map(<span class="op">|</span>ncol<span class="op">|</span> <span class="op">{</span></span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>                <span class="kw">self</span><span class="op">.</span>rows</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>                    <span class="op">.</span>iter()</span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>                    <span class="op">.</span>map(<span class="op">|</span>row<span class="op">|</span> row[ncol])</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>                    <span class="op">.</span><span class="pp">collect::</span><span class="op">&lt;</span><span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">isize</span><span class="op">&gt;&gt;</span>()</span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>            <span class="op">}</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>            <span class="op">.</span>collect()<span class="op">;</span></span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>        Matrix <span class="op">{</span></span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>            rows<span class="op">,</span></span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a>            row_count<span class="op">:</span> <span class="kw">self</span><span class="op">.</span>col_count<span class="op">,</span></span>
+<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a>            col_count<span class="op">:</span> <span class="kw">self</span><span class="op">.</span>row_count<span class="op">,</span></span>
+<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Pros: might be more performant</p>
+<p>Cons: cognitive overhead, detailed documentation is required</p>
+</div>
+<div id="part-3-type-conversions" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+</div>
+<div id="part-3-type-conversions-1" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="frominto-infallible">From/Into: Infallible</h2>
+<ul>
+<li>infallible conversion</li>
+<li>non-async: just data rearrangement without complex business
+logic</li>
+<li>processing nested structures one at a time
+<ul>
+<li>each impl is concerned with exactly one type</li>
+</ul></li>
+</ul>
+</div>
+<div id="part-3-type-conversions-2" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="frominto-infallible-1">From/Into: Infallible</h2>
+<ul>
+<li>From &amp; Into are dual</li>
+<li>implementing From gives us Into for free</li>
+</ul>
+<div class="columns">
+<div class="left">
+<div class="center">
+<p>We write</p>
+</div>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="kw">impl</span> <span class="bu">From</span><span class="op">&lt;</span>Wood<span class="op">&gt;</span> <span class="cf">for</span> Paper <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span></code></pre></div>
+</div><div class="right">
+<div class="center">
+<p>Rust implements</p>
+</div>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="kw">impl</span> <span class="bu">Into</span><span class="op">&lt;</span>Paper<span class="op">&gt;</span> <span class="cf">for</span> Wood <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="part-3-type-conversions-3" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="frominto-infallible-2">From/Into: Infallible</h2>
+<ul>
+<li>From &amp; Into are dual</li>
+<li>implementing From gives us Into for free</li>
+</ul>
+<div class="columns">
+<div class="left">
+<div class="center">
+<p>We write</p>
+</div>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="kw">impl</span> <span class="bu">From</span><span class="op">&lt;</span>Wood<span class="op">&gt;</span> <span class="cf">for</span> Paper <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="kw">impl</span> <span class="bu">Into</span><span class="op">&lt;</span>Paper<span class="op">&gt;</span> <span class="cf">for</span> Wood <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span></code></pre></div>
+</div><div class="right">
+<div class="center">
+<p>Rust implements</p>
+</div>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="kw">impl</span> <span class="bu">Into</span><span class="op">&lt;</span>Paper<span class="op">&gt;</span> <span class="cf">for</span> Wood <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span></code></pre></div>
+<p><strong>N/A</strong></p>
+</div>
+</div>
+</div>
+<div id="part-3-type-conversions-4" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="frominto-infallible-3">From/Into: Infallible</h2>
+<p>Example: Convert between representations</p>
+<div class="columns">
+<div class="left">
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="kw">struct</span> Birthday(Date)<span class="op">;</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="kw">struct</span> FullPerson <span class="op">{</span></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>    name<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>    birthday<span class="op">:</span> Birthday<span class="op">,</span></span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>    birth_number<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a>    address<span class="op">:</span> FullAddress<span class="op">,</span></span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" tabindex="-1"></a><span class="kw">struct</span> FullAddress <span class="op">{</span></span>
+<span id="cb23-10"><a href="#cb23-10" tabindex="-1"></a>    street_number<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb23-11"><a href="#cb23-11" tabindex="-1"></a>    street<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb23-12"><a href="#cb23-12" tabindex="-1"></a>    city<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb23-13"><a href="#cb23-13" tabindex="-1"></a>    country<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb23-14"><a href="#cb23-14" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div><div class="right">
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="kw">struct</span> Age(Duration)<span class="op">;</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="kw">struct</span> PartialPerson <span class="op">{</span></span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a>    name<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a>    age<span class="op">:</span> Age<span class="op">,</span></span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>    address<span class="op">:</span> PartialAddress<span class="op">,</span></span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a><span class="kw">struct</span> PartialAddress <span class="op">{</span></span>
+<span id="cb24-9"><a href="#cb24-9" tabindex="-1"></a>    city<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb24-10"><a href="#cb24-10" tabindex="-1"></a>    country<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb24-11"><a href="#cb24-11" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="part-3-type-conversions-5" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="frominto-infallible-4">From/Into: Infallible</h2>
+<p>Example: Convert between representations</p>
+<div class="columns">
+<div class="left">
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="kw">impl</span> <span class="bu">From</span><span class="op">&lt;</span>FullPerson<span class="op">&gt;</span> <span class="cf">for</span> PartialPerson <span class="op">{</span></span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>    <span class="kw">fn</span> from(fp<span class="op">:</span> FullPerson) <span class="op">-&gt;</span> <span class="dt">Self</span> <span class="op">{</span></span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>        <span class="dt">Self</span> <span class="op">{</span></span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>            name<span class="op">:</span> fp<span class="op">.</span>name<span class="op">,</span></span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a>            age<span class="op">:</span> fp<span class="op">.</span>birthday<span class="op">.</span>into()<span class="op">,</span></span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a>            address<span class="op">:</span> fp<span class="op">.</span>address<span class="op">.</span>into()</span>
+<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb25-9"><a href="#cb25-9" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb25-10"><a href="#cb25-10" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="#cb25-11" tabindex="-1"></a><span class="kw">impl</span> <span class="bu">From</span><span class="op">&lt;</span>FullAddress<span class="op">&gt;</span> <span class="cf">for</span> PartialAddress <span class="op">{</span></span>
+<span id="cb25-12"><a href="#cb25-12" tabindex="-1"></a>    <span class="kw">fn</span> from(fa<span class="op">:</span> FullAddress) <span class="op">-&gt;</span> <span class="dt">Self</span> <span class="op">{</span></span>
+<span id="cb25-13"><a href="#cb25-13" tabindex="-1"></a>        <span class="dt">Self</span> <span class="op">{</span></span>
+<span id="cb25-14"><a href="#cb25-14" tabindex="-1"></a>            city<span class="op">:</span> fa<span class="op">.</span>city<span class="op">,</span></span>
+<span id="cb25-15"><a href="#cb25-15" tabindex="-1"></a>            country<span class="op">:</span> fa<span class="op">.</span>country<span class="op">,</span></span>
+<span id="cb25-16"><a href="#cb25-16" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb25-17"><a href="#cb25-17" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb25-18"><a href="#cb25-18" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div><div class="right">
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="kw">impl</span> <span class="bu">From</span><span class="op">&lt;</span>Birthday<span class="op">&gt;</span> <span class="cf">for</span> Age <span class="op">{</span></span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>    <span class="kw">fn</span> from(bd<span class="op">:</span> Birthday) <span class="op">-&gt;</span> <span class="dt">Self</span> <span class="op">{</span></span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>        <span class="dt">Self</span>(<span class="pp">SystemTime::</span>now() <span class="op">-</span> bd<span class="op">.</span><span class="dv">0</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="part-3-type-conversions-6" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="tryfromtryinto-fallible">TryFrom/TryInto: Fallible</h2>
+<ul>
+<li>very similar to <code>From</code></li>
+<li>fallible conversion</li>
+<li>non-async: just data rearrangement without complex business
+logic</li>
+<li>processing nested structures one at a time
+<ul>
+<li>each impl is concerned with exactly one type</li>
+</ul></li>
+</ul>
+</div>
+<div id="part-3-type-conversions-7" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="tryfromtryinto-fallible-1">TryFrom/TryInto: Fallible</h2>
+<p>Example: Users must be at least 13 years old to register.</p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="kw">struct</span> User <span class="op">{</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>    name<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>    age<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="part-3-type-conversions-8" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="tryfromtryinto-fallible-2">TryFrom/TryInto: Fallible</h2>
+<p>Example: Users must be at least 13 years old to register.</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="kw">struct</span> User <span class="op">{</span></span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>    name<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>    age<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a><span class="kw">struct</span> UserIneligible<span class="op">;</span></span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a><span class="kw">fn</span> register(u<span class="op">:</span> User) <span class="op">-&gt;</span> <span class="dt">Result</span><span class="op">&lt;</span>()<span class="op">,</span> UserIneligible<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a>    <span class="cf">if</span> u<span class="op">.</span>age <span class="op">&lt;</span> <span class="dv">13</span> <span class="op">{</span></span>
+<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a>        <span class="cf">return</span> <span class="cn">Err</span>(UserIneligible)<span class="op">;</span></span>
+<span id="cb28-11"><a href="#cb28-11" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb28-12"><a href="#cb28-12" tabindex="-1"></a></span>
+<span id="cb28-13"><a href="#cb28-13" tabindex="-1"></a>    <span class="co">// </span><span class="al">TODO</span><span class="co">: insert user into database</span></span>
+<span id="cb28-14"><a href="#cb28-14" tabindex="-1"></a></span>
+<span id="cb28-15"><a href="#cb28-15" tabindex="-1"></a>    <span class="cn">Ok</span>(())</span>
+<span id="cb28-16"><a href="#cb28-16" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="part-3-type-conversions-9" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="tryfromtryinto-fallible-3">TryFrom/TryInto: Fallible</h2>
+<p>Example: Users must be at least 13 years old to register.</p>
+<div class="columns">
+<div class="left">
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="kw">struct</span> User <span class="op">{</span></span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>    name<span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>    age<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
+<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb29-5"><a href="#cb29-5" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" tabindex="-1"></a><span class="kw">struct</span> UserIneligible<span class="op">;</span></span>
+<span id="cb29-7"><a href="#cb29-7" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" tabindex="-1"></a><span class="kw">fn</span> register(u<span class="op">:</span> User) <span class="op">-&gt;</span> <span class="dt">Result</span><span class="op">&lt;</span>()<span class="op">,</span> UserIneligible<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb29-10"><a href="#cb29-10" tabindex="-1"></a>    <span class="kw">let</span> u <span class="op">=</span> <span class="pp">EligibleUser::</span>try_from(u)<span class="op">?;</span></span>
+<span id="cb29-11"><a href="#cb29-11" tabindex="-1"></a></span>
+<span id="cb29-12"><a href="#cb29-12" tabindex="-1"></a>    <span class="co">// </span><span class="al">TODO</span><span class="co">: insert user into database</span></span>
+<span id="cb29-13"><a href="#cb29-13" tabindex="-1"></a></span>
+<span id="cb29-14"><a href="#cb29-14" tabindex="-1"></a>    <span class="cn">Ok</span>(())</span>
+<span id="cb29-15"><a href="#cb29-15" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div><div class="right">
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="kw">struct</span> EligibleUser(User)<span class="op">;</span></span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a><span class="kw">impl</span> <span class="bu">TryFrom</span><span class="op">&lt;</span>User<span class="op">&gt;</span> <span class="cf">for</span> EligibleUser <span class="op">{</span></span>
+<span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a>    <span class="kw">type</span> Error <span class="op">=</span> UserIneligible<span class="op">;</span></span>
+<span id="cb30-5"><a href="#cb30-5" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" tabindex="-1"></a>    <span class="kw">fn</span> try_from(u<span class="op">:</span> User) <span class="op">-&gt;</span> <span class="dt">Result</span><span class="op">&lt;</span><span class="dt">Self</span><span class="op">,</span> <span class="dt">Self</span><span class="pp">::</span><span class="bu">Error</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb30-7"><a href="#cb30-7" tabindex="-1"></a>        <span class="cf">if</span> u<span class="op">.</span>age <span class="op">&lt;</span> <span class="dv">13</span> <span class="op">{</span></span>
+<span id="cb30-8"><a href="#cb30-8" tabindex="-1"></a>            <span class="cf">return</span> <span class="cn">Err</span>(UserIneligible)<span class="op">;</span></span>
+<span id="cb30-9"><a href="#cb30-9" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb30-10"><a href="#cb30-10" tabindex="-1"></a></span>
+<span id="cb30-11"><a href="#cb30-11" tabindex="-1"></a>        <span class="cn">Ok</span>(<span class="dt">Self</span>(u))</span>
+<span id="cb30-12"><a href="#cb30-12" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb30-13"><a href="#cb30-13" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="part-3-type-conversions-10" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="fromstr"><a
+href="https://doc.rust-lang.org/std/str/trait.FromStr.html"><code>FromStr</code></a></h2>
+<ul>
+<li>fallible conversion from string</li>
+<li>counterpart: <a
+href="https://doc.rust-lang.org/std/string/struct.String.html#method.parse"><code>String::parse</code></a>,
+<a
+href="https://doc.rust-lang.org/std/primitive.str.html#method.parse"><code>str::parse</code></a></li>
+</ul>
+<p>Non-empty string:</p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="kw">struct</span> NonEmptyString(<span class="dt">String</span>)<span class="op">;</span></span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a><span class="kw">impl</span> <span class="bu">FromStr</span> <span class="cf">for</span> NonEmptyString <span class="op">{</span></span>
+<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a>    <span class="kw">type</span> Err <span class="op">=</span> ()<span class="op">;</span></span>
+<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" tabindex="-1"></a>    <span class="kw">fn</span> from_str(s<span class="op">:</span> <span class="op">&amp;</span><span class="dt">str</span>) <span class="op">-&gt;</span> <span class="dt">Result</span><span class="op">&lt;</span><span class="dt">Self</span><span class="op">,</span> <span class="dt">Self</span><span class="pp">::</span><span class="cn">Err</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb31-7"><a href="#cb31-7" tabindex="-1"></a>        <span class="cf">if</span> s<span class="op">.</span>empty() <span class="op">{</span></span>
+<span id="cb31-8"><a href="#cb31-8" tabindex="-1"></a>            <span class="cf">return</span> <span class="cn">Err</span>(())<span class="op">;</span></span>
+<span id="cb31-9"><a href="#cb31-9" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb31-10"><a href="#cb31-10" tabindex="-1"></a></span>
+<span id="cb31-11"><a href="#cb31-11" tabindex="-1"></a>        <span class="cn">Ok</span>(<span class="dt">Self</span>(s<span class="op">.</span>into()))</span>
+<span id="cb31-12"><a href="#cb31-12" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb31-13"><a href="#cb31-13" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb31-14"><a href="#cb31-14" tabindex="-1"></a></span>
+<span id="cb31-15"><a href="#cb31-15" tabindex="-1"></a><span class="pp">assert_eq!</span>(<span class="st">&quot;&quot;</span><span class="op">.</span><span class="pp">parse::</span><span class="op">&lt;</span>NonEmptyString<span class="op">&gt;</span>()<span class="op">,</span> <span class="cn">Err</span>(()))<span class="op">;</span></span>
+<span id="cb31-16"><a href="#cb31-16" tabindex="-1"></a><span class="pp">assert_eq!</span>(<span class="st">&quot;hello&quot;</span><span class="op">.</span><span class="pp">parse::</span><span class="op">&lt;</span>NonEmptyString<span class="op">&gt;</span>()<span class="op">,</span> <span class="cn">Ok</span>(NonEmptyString(<span class="st">&quot;hello&quot;</span><span class="op">.</span>into())))<span class="op">;</span></span></code></pre></div>
+</div>
+<div id="part-3-type-conversions-11" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="useful-external-crates-serde">Useful external crates: <a
+href="https://crates.io/crates/serde">Serde</a></h2>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="at">#[</span>derive<span class="at">(</span>Serialize<span class="op">,</span> Deserialize<span class="op">,</span> <span class="bu">Debug</span><span class="at">)]</span></span>
+<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a><span class="kw">struct</span> Point <span class="op">{</span></span>
+<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a>    x<span class="op">:</span> <span class="dt">i32</span><span class="op">,</span></span>
+<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a>    y<span class="op">:</span> <span class="dt">i32</span><span class="op">,</span></span>
+<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb32-6"><a href="#cb32-6" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" tabindex="-1"></a><span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb32-8"><a href="#cb32-8" tabindex="-1"></a>    <span class="kw">let</span> point <span class="op">=</span> Point <span class="op">{</span> x<span class="op">:</span> <span class="dv">1</span><span class="op">,</span> y<span class="op">:</span> <span class="dv">2</span> <span class="op">};</span></span>
+<span id="cb32-9"><a href="#cb32-9" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" tabindex="-1"></a>    <span class="co">// Convert the Point to a JSON string.</span></span>
+<span id="cb32-11"><a href="#cb32-11" tabindex="-1"></a>    <span class="kw">let</span> serialized <span class="op">=</span> <span class="pp">serde_json::</span>to_string(<span class="op">&amp;</span>point)<span class="op">.</span>unwrap()<span class="op">;</span></span>
+<span id="cb32-12"><a href="#cb32-12" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" tabindex="-1"></a>    <span class="co">// Prints serialized = {&quot;x&quot;:1,&quot;y&quot;:2}</span></span>
+<span id="cb32-14"><a href="#cb32-14" tabindex="-1"></a>    <span class="pp">println!</span>(<span class="st">&quot;serialized = {}&quot;</span><span class="op">,</span> serialized)<span class="op">;</span></span>
+<span id="cb32-15"><a href="#cb32-15" tabindex="-1"></a></span>
+<span id="cb32-16"><a href="#cb32-16" tabindex="-1"></a>    <span class="co">// Convert the JSON string back to a Point.</span></span>
+<span id="cb32-17"><a href="#cb32-17" tabindex="-1"></a>    <span class="kw">let</span> deserialized<span class="op">:</span> Point <span class="op">=</span> <span class="pp">serde_json::</span>from_str(<span class="op">&amp;</span>serialized)<span class="op">.</span>unwrap()<span class="op">;</span></span>
+<span id="cb32-18"><a href="#cb32-18" tabindex="-1"></a></span>
+<span id="cb32-19"><a href="#cb32-19" tabindex="-1"></a>    <span class="co">// Prints deserialized = Point { x: 1, y: 2 }</span></span>
+<span id="cb32-20"><a href="#cb32-20" tabindex="-1"></a>    <span class="pp">println!</span>(<span class="st">&quot;deserialized = {:?}&quot;</span><span class="op">,</span> deserialized)<span class="op">;</span></span>
+<span id="cb32-21"><a href="#cb32-21" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Credit: <a href="https://docs.rs/serde">serde docs</a></p>
+</div>
+<div id="part-3-type-conversions-12" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="useful-external-crates-serde-1">Useful external crates: <a
+href="https://crates.io/crates/serde">Serde</a></h2>
+<div class="float">
+<img src="./serde.svg" class="center" height="800" alt="serde" />
+<div class="figcaption">serde</div>
+</div>
+</div>
+<div id="part-3-type-conversions-13" class="slide section level1">
+<h1>Part 3: Type Conversions</h1>
+<h2 id="useful-external-crates-strum">Useful external crates: <a
+href="https://crates.io/crates/strum">Strum</a></h2>
+<div class="columns">
+<div class="left">
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="op">,</span> <span class="bu">PartialEq</span><span class="op">,</span> EnumString<span class="at">)]</span></span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="kw">enum</span> Color <span class="op">{</span></span>
+<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a>    Red<span class="op">,</span></span>
+<span id="cb33-4"><a href="#cb33-4" tabindex="-1"></a>    Green <span class="op">{</span></span>
+<span id="cb33-5"><a href="#cb33-5" tabindex="-1"></a>        range<span class="op">:</span> <span class="dt">usize</span><span class="op">,</span></span>
+<span id="cb33-6"><a href="#cb33-6" tabindex="-1"></a>    <span class="op">},</span></span>
+<span id="cb33-7"><a href="#cb33-7" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" tabindex="-1"></a>    <span class="at">#[</span>strum<span class="at">(</span>serialize <span class="op">=</span> <span class="st">&quot;blue&quot;</span><span class="op">,</span> serialize <span class="op">=</span> <span class="st">&quot;b&quot;</span><span class="at">)]</span></span>
+<span id="cb33-9"><a href="#cb33-9" tabindex="-1"></a>    Blue(<span class="dt">usize</span>)<span class="op">,</span></span>
+<span id="cb33-10"><a href="#cb33-10" tabindex="-1"></a></span>
+<span id="cb33-11"><a href="#cb33-11" tabindex="-1"></a>    <span class="at">#[</span>strum<span class="at">(</span>disabled<span class="at">)]</span></span>
+<span id="cb33-12"><a href="#cb33-12" tabindex="-1"></a>    Yellow<span class="op">,</span></span>
+<span id="cb33-13"><a href="#cb33-13" tabindex="-1"></a></span>
+<span id="cb33-14"><a href="#cb33-14" tabindex="-1"></a>    <span class="at">#[</span>strum<span class="at">(</span>ascii_case_insensitive<span class="at">)]</span></span>
+<span id="cb33-15"><a href="#cb33-15" tabindex="-1"></a>    Black<span class="op">,</span></span>
+<span id="cb33-16"><a href="#cb33-16" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div><div class="right">
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a><span class="kw">let</span> color_variant <span class="op">=</span> <span class="pp">Color::</span>from_str(<span class="st">&quot;Red&quot;</span>)<span class="op">.</span>unwrap()<span class="op">;</span></span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a><span class="pp">assert_eq!</span>(<span class="pp">Color::</span>Red<span class="op">,</span> color_variant)<span class="op">;</span></span></code></pre></div>
+</div>
+</div>
+<p>Credit: <a href="https://docs.rs/strum">strum docs</a></p>
+</div>
+<div id="summary" class="slide section level1">
+<h1>Summary</h1>
+<ul>
+<li>do <a
+href="https://rust-unofficial.github.io/patterns/idioms/index.html">learn
+about idioms</a></li>
+<li>do use idiomatic code</li>
+<li>do not blindly apply idioms, consider goals
+<ul>
+<li>cognitive overhead</li>
+<li>optimization</li>
+</ul></li>
+</ul>
+</div>
+</body>
+</html>
