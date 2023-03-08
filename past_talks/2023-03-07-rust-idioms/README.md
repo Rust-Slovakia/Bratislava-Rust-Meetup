@@ -7,8 +7,8 @@ Presentation "Starting with Rust Idioms" as presented by the speaker on March 7t
 
 # Viewing the presentation
 
-[Open talk.html](https://github.com/Rust-Slovakia/Bratislava-Rust-Meetup/blob/main/past_talks/2023-03-07_rust-idioms/talk.html) that was used during presentation.
-[Open talk.pdf](https://github.com/Rust-Slovakia/Bratislava-Rust-Meetup/blob/main/past_talks/2023-03-07_rust-idioms/talk.pdf) that was generated from the HTML.
+[Open talk.html](https://github.com/Rust-Slovakia/Bratislava-Rust-Meetup/blob/main/past_talks/2023-03-07-rust-idioms/talk.html) that was used during presentation.
+[Open talk.pdf](https://github.com/Rust-Slovakia/Bratislava-Rust-Meetup/blob/main/past_talks/2023-03-07-rust-idioms/talk.pdf) that was generated from the HTML.
 
 # Building the presentation
 
