@@ -32,11 +32,13 @@ Budú ohlásené prostredníctvom platformy [Meetup](https://www.meetup.com/brat
 
 - Kde: Nivy Tower, 6. poschodie
 - Prezentácia: Unsafe Rust - misconceptions, footguns, patterns.
+- Video: [youtube](https://www.youtube.com/watch?v=cn6iWUUBxBY)
 
 ### [7. 3. 2023 Rust Meetup by Sonalake](https://www.meetup.com/bratislava-rust-meetup-group/events/291657555/)
 
 - Kde: Nivy Tower, 6. poschodie
 - Prezentácia: [Starting with Rust Idioms](https://github.com/Rust-Slovakia/Bratislava-Rust-Meetup/blob/main/past_talks/2023-03-07-rust-idioms)
+- Video: [youtube](https://www.youtube.com/watch?v=F0QMYRvl400)
 
 ### [23.11. 2023: Initial meet and greet Rust Meetup](https://www.meetup.com/bratislava-rust-meetup-group/events/289028178/)
 
