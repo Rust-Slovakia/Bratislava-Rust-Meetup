@@ -1,3 +1,8 @@
+[![](https://img.shields.io/badge/%F0%9F%93%85%C4%8Fal%C5%A1%C3%AD%20meetup-ohlásime%20čoskoro-gold?style=for-the-badge)](https://www.meetup.com/bratislava-rust-meetup-group/)
+[![](https://img.shields.io/badge/%E2%96%B6%EF%B8%8Fpredn%C3%A1%C5%A1ky-youtube-red?style=for-the-badge)](https://www.youtube.com/playlist?list=PLEg4051mgC8X0sZHaRZTgRsQinT53gRJZ)
+[![](https://img.shields.io/badge/📝eventy-meetup-orange?style=for-the-badge)](https://www.meetup.com/bratislava-rust-meetup-group/)
+[![](https://img.shields.io/badge/🗺️miesto%20konania-Nivy%20Tower-green?style=for-the-badge)](https://maps.app.goo.gl/g8B4kzuakq32AZ54A)
+
 Hello, for English, scroll below.
 Ahojte, pre Slovenčinu čítajte ďalej.
 
