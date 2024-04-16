@@ -1,0 +1,25 @@
+
+body {
+background-color: #262E32;
+color: white;
+}
+
+.sourceCode {
+background-color: #262E32;
+color: white;
+}
+
+a{
+color: #3A86FF !important;
+text-decoration: underline;
+}
+
+div.toolbar {
+background-color: #262E32;
+border-top: none;
+color: #3A86FF !important;
+}
+
+div.slidy_toc {
+background-color: #262E32;
+}

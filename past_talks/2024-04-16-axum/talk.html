@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Tomáš Jašek" />
+  <title>Introducing axum Web Framework</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        background-color: #232629;
+        color: #7a7c7d;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #7a7c7d;  padding-left: 4px; }
+    div.sourceCode
+      { color: #ffffff; background-color: #262e32; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #cfcfc2; } /* Normal */
+    code span.al { color: #95da4c; background-color: #4d1f24; font-weight: bold; } /* Alert */
+    code span.an { color: #3f8058; } /* Annotation */
+    code span.at { color: #2980b9; } /* Attribute */
+    code span.bn { color: #f67400; } /* BaseN */
+    code span.bu { color: #ffffff; } /* BuiltIn */
+    code span.cf { color: #00ffff; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #3daee9; } /* Char */
+    code span.cn { color: #00af00; font-weight: bold; } /* Constant */
+    code span.co { color: #7a7c7d; } /* Comment */
+    code span.cv { color: #7f8c8d; } /* CommentVar */
+    code span.do { color: #a43340; } /* Documentation */
+    code span.dt { color: #ffffff; } /* DataType */
+    code span.dv { color: #f67400; } /* DecVal */
+    code span.er { color: #005fff; text-decoration: underline; } /* Error */
+    code span.ex { color: #0099ff; font-weight: bold; } /* Extension */
+    code span.fl { color: #f67400; } /* Float */
+    code span.fu { color: #005fff; } /* Function */
+    code span.im { color: #27ae60; } /* Import */
+    code span.in { color: #c45b00; } /* Information */
+    code span.kw { color: #00ffff; font-weight: bold; } /* Keyword */
+    code span.op { color: #cfcfc2; } /* Operator */
+    code span.ot { color: #27ae60; } /* Other */
+    code span.pp { color: #ffffff; } /* Preprocessor */
+    code span.re { color: #2980b9; background-color: #153042; } /* RegionMarker */
+    code span.sc { color: #3daee9; } /* SpecialChar */
+    code span.ss { color: #da4453; } /* SpecialString */
+    code span.st { color: #00ff00; } /* String */
+    code span.va { color: #005fff; } /* Variable */
+    code span.vs { color: #da4453; } /* VerbatimString */
+    code span.wa { color: #da4453; } /* Warning */
+  </style>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+    href="https://www.w3.org/Talks/Tools/Slidy2/styles/slidy.css" />
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+   href="./slidy_black.css" />
+  <script src="https://www.w3.org/Talks/Tools/Slidy2/scripts/slidy.js"
+    charset="utf-8" type="text/javascript"></script>
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">Introducing axum Web Framework</h1>
+  <p class="author">
+Tomáš Jašek
+  </p>
+  <p class="date">April 16, 2024</p>
+</div>
+<div id="tomáš-jašek" class="slide section level1">
+<h1>Tomáš Jašek</h1>
+<ul>
+<li>Rust backend engineer at <a
+href="https://sonalake.com">Sonalake</a></li>
+<li><a
+href="https://sk.linkedin.com/in/tomáš-jašek-4417abb8">LinkedIn</a>, <a
+href="https://github.com/tomsik68">Github</a></li>
+</ul>
+</div>
+<div id="goal" class="slide section level1">
+<h1>Goal</h1>
+<p>Show that Rust is ready for web server development</p>
+</div>
+<div id="agenda" class="slide section level1">
+<h1>Agenda</h1>
+<ul>
+<li>web 101</li>
+<li>what is a web framework</li>
+<li>notable web framework features</li>
+<li>Rust web frameworks overview</li>
+<li><strong>look at examples in axum</strong></li>
+</ul>
+</div>
+<div id="web-101" class="slide section level1">
+<h1>Web 101</h1>
+<h2 id="static-site">Static Site</h2>
+<ul>
+<li>browsing to a URL causes the browser to connect to a web server and
+send a request</li>
+<li>web server translates the URL to a path on local filesystem</li>
+<li>web server responds with file contents</li>
+</ul>
+<h2 id="general-web-services">General Web Services</h2>
+<ul>
+<li>the program sending the request doesn’t have to be a web
+browser</li>
+<li>web server can respond with different payload each time</li>
+<li>response doesn’t have to be HTML</li>
+</ul>
+</div>
+<div id="what-is-a-web-framework" class="slide section level1">
+<h1>What is a web framework?</h1>
+<ul>
+<li>web framework is a type of crate offering some functionality related
+to web</li>
+<li>today, we’ll discuss server-side only</li>
+<li>web frameworks allow us to focus on business logic rather than
+server implementation details</li>
+</ul>
+</div>
+<div id="notable-web-framework-features" class="slide section level1">
+<h1>Notable Web Framework features</h1>
+<ul>
+<li>Network I/O</li>
+<li>HTTP request deserialization</li>
+<li>HTTP response serialization</li>
+<li>middleware</li>
+<li>routing</li>
+<li>observability</li>
+<li>error handling</li>
+<li>testing</li>
+</ul>
+</div>
+<div id="what-about-rust" class="slide section level1">
+<h1>What about Rust?</h1>
+<ul>
+<li><a href="https://docs.rs/actix-web">actix-web</a>: stabilized,
+actively maintained</li>
+<li><a
+href="https://pavex.dev/docs/getting_started/quickstart/">pavex</a>: in
+early stages</li>
+<li><a href="https://docs.rs/axum">axum</a>: in development</li>
+<li><a href="https://docs.rs/warp">warp</a>: in development</li>
+</ul>
+<p>…and many more on crates.io: <a
+href="https://crates.io/categories/web-programming::http-server">Web
+Programming/HTTP Server</a></p>
+</div>
+<div id="why-look-at-axum" class="slide section level1">
+<h1>Why look at axum?</h1>
+<ul>
+<li>beginner-friendly</li>
+<li>bare-bones</li>
+<li>modular</li>
+<li>less constraints on handlers</li>
+<li><a href="https://docs.rs/axum">comprehensive documentation</a></li>
+<li>tokio &amp; tower ecosystem</li>
+</ul>
+</div>
+<div id="first-look-at-axum-hello-world" class="slide section level1">
+<h1>First look at axum: Hello World</h1>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span><span class="pp">tokio::</span>main<span class="at">]</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> app <span class="op">=</span> <span class="pp">Router::</span>new()<span class="op">.</span>route(<span class="st">&quot;/&quot;</span><span class="op">,</span> get(hello_world))<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> listener <span class="op">=</span> <span class="pp">tokio::net::TcpListener::</span>bind(<span class="st">&quot;0.0.0.0:3000&quot;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="kw">await</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>unwrap()<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="pp">axum::</span>serve(listener<span class="op">,</span> app)<span class="op">.</span><span class="kw">await</span><span class="op">.</span>unwrap()<span class="op">;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> hello_world() <span class="op">-&gt;</span> <span class="op">&amp;</span><span class="ot">&#39;static</span> <span class="dt">str</span> <span class="op">{</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Hello, World!&quot;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Re-state that sending a request to the server causes the
+<code>hello_world</code> function to be called.</p>
+</div>
+<div id="routing" class="slide section level1">
+<h1>Routing</h1>
+<p>Problem: I have a web service that serves multiple endpoints. I’d
+like to invoke different functions depending on the URL.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">axum::</span><span class="op">{</span>Router<span class="op">,</span> <span class="pp">routing::</span>get<span class="op">};</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">// our router</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> app <span class="op">=</span> <span class="pp">Router::</span>new()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>route(<span class="st">&quot;/&quot;</span><span class="op">,</span> get(root))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>route(<span class="st">&quot;/foo&quot;</span><span class="op">,</span> get(get_foo)<span class="op">.</span>post(post_foo))<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">// handlers</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> root() <span class="op">{}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> get_foo() <span class="op">{}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> post_foo() <span class="op">{}</span></span></code></pre></div>
+<p><a
+href="https://docs.rs/axum/latest/axum/struct.Router.html">axum::Router</a></p>
+</div>
+<div id="request-parameters" class="slide section level1">
+<h1>Request parameters</h1>
+<p>Problem: In a single route handler, the caller has passed a request
+parameter. How can I access it?</p>
+<ul>
+<li>examples: query parameters, path parameters, request body</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> app <span class="op">=</span> <span class="pp">Router::</span>new()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>route(<span class="st">&quot;/path/:user_id&quot;</span><span class="op">,</span> get(get_user_by_id))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>route(<span class="st">&quot;/search&quot;</span><span class="op">,</span> post(search))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>route(<span class="st">&quot;/form&quot;</span><span class="op">,</span> post(process_form))<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> get_user_by_id(<span class="dt">Path</span>(x)<span class="op">:</span> <span class="dt">Path</span><span class="op">&lt;</span><span class="dt">u32</span><span class="op">&gt;</span>) <span class="op">{}</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> search(Query(params)<span class="op">:</span> Query<span class="op">&lt;</span>HashMap<span class="op">&lt;</span><span class="dt">String</span><span class="op">,</span> <span class="dt">String</span><span class="op">&gt;&gt;</span>) <span class="op">{}</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> process_form(Form(params)<span class="op">:</span> Form<span class="op">&lt;</span>HashMap<span class="op">&lt;</span><span class="dt">String</span><span class="op">,</span> <span class="dt">String</span><span class="op">&gt;&gt;</span>) <span class="op">{}</span></span></code></pre></div>
+<p><a
+href="https://docs.rs/axum/latest/axum/extract/index.html">axum::extract</a></p>
+</div>
+<div id="dealing-with-rejection" class="slide section level1">
+<h1>Dealing with Rejection</h1>
+<p>But what if the request parameter fails to parse?</p>
+<p>axum offers a fallible implementation. Instead of using
+<code>Path&lt;T&gt;</code>, we can use
+<code>Result&lt;Path&lt;T&gt;, Path&lt;T&gt;::Rejection&gt;</code>.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> app <span class="op">=</span> <span class="pp">Router::</span>new()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>route(<span class="st">&quot;/path/:user_id&quot;</span><span class="op">,</span> get(get_user_by_id))<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> get_user_by_id(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    result<span class="op">:</span> <span class="dt">Result</span><span class="op">&lt;</span><span class="dt">Path</span><span class="op">&lt;</span><span class="dt">u32</span><span class="op">&gt;,</span> <span class="dt">Path</span><span class="op">&lt;</span><span class="dt">u32</span><span class="op">&gt;</span><span class="pp">::</span>Rejection<span class="op">&gt;,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">{}</span></span></code></pre></div>
+</div>
+<div id="response-body" class="slide section level1">
+<h1>Response body</h1>
+<p>Problem: I want to set a response body.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> app <span class="op">=</span> <span class="pp">Router::</span>new()<span class="op">.</span>route(<span class="st">&quot;/&quot;</span><span class="op">,</span> get(hello_world))<span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> hello_world() <span class="op">-&gt;</span> <span class="op">&amp;</span><span class="ot">&#39;static</span> <span class="dt">str</span> <span class="op">{</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Hello, World!&quot;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="setting-status-code" class="slide section level1">
+<h1>Setting status code</h1>
+<p>Problem: I want to return a 404 error code from my handler.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> hello_world() <span class="op">-&gt;</span> (StatusCode<span class="op">,</span> <span class="op">&amp;</span><span class="ot">&#39;static</span> <span class="dt">str</span>) <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="pp">StatusCode::</span>NOT_FOUND<span class="op">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Hello, World!&quot;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="attaching-response-headers" class="slide section level1">
+<h1>Attaching response headers</h1>
+<p>Problem: I want to set a header in a reponse from my handler.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> hello_world() <span class="op">-&gt;</span> (HeaderMap<span class="op">,</span> <span class="op">&amp;</span><span class="ot">&#39;static</span> <span class="dt">str</span>) <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> headers <span class="op">=</span> <span class="pp">HeaderMap::</span>new()<span class="op">;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    headers<span class="op">.</span>insert(<span class="pp">HeaderName::</span>CONTENT_TYPE<span class="op">,</span> <span class="st">&quot;application/json&quot;</span>)<span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        headers<span class="op">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;{ </span><span class="sc">\&quot;</span><span class="st">hello</span><span class="sc">\&quot;</span><span class="st">: </span><span class="sc">\&quot;</span><span class="st">world</span><span class="sc">\&quot;</span><span class="st"> }&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="note-on-two-different-response-types"
+class="slide section level1">
+<h1>Note on two different response types</h1>
+<p>Problem: What if my handler’s behavior branches?</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> app <span class="op">=</span> <span class="pp">Router::</span>new()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>route(<span class="st">&quot;/path/:user_id&quot;</span><span class="op">,</span> get(get_user_by_id))<span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> get_user_by_id(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    user_id<span class="op">:</span> <span class="dt">Result</span><span class="op">&lt;</span><span class="dt">Path</span><span class="op">&lt;</span><span class="dt">u32</span><span class="op">&gt;,</span> <span class="dt">Path</span><span class="op">&lt;</span><span class="dt">u32</span><span class="op">&gt;</span><span class="pp">::</span>Rejection<span class="op">&gt;,</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> Response <span class="op">{</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">match</span> result <span class="op">{</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="cn">Ok</span>(user_id) <span class="op">=&gt;</span> <span class="pp">format!</span>(<span class="st">&quot;User with id={user_id}&quot;</span>)<span class="op">.</span>into_response()<span class="op">,</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="cn">Err</span>(err) <span class="op">=&gt;</span> (</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>            <span class="pp">StatusCode::</span>NOT_FOUND<span class="op">,</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            <span class="pp">format!</span>(<span class="st">&quot;user not found. reason: {err}&quot;</span>)<span class="op">,</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        )<span class="op">.</span>into_response()<span class="op">,</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><a
+href="https://docs.rs/axum/latest/axum/response/trait.IntoResponse.html">axum::response::IntoResponse</a></p>
+</div>
+<div id="moving-some-logic-out-of-a-handler"
+class="slide section level1">
+<h1>Moving some logic out of a handler</h1>
+<p>Problem: My handler is too complex!</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> get_user_by_id(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    user_id<span class="op">:</span> UserId<span class="op">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="dt">String</span> <span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="pp">format!</span>(<span class="st">&quot;User with id={}&quot;</span><span class="op">,</span> user_id<span class="op">.</span><span class="dv">0</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> UserId(<span class="kw">pub</span> <span class="dt">u32</span>)<span class="op">;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span><span class="pp">axum::</span>async_trait<span class="at">]</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span><span class="op">&lt;</span>S<span class="op">&gt;</span> FromRequestParts<span class="op">&lt;</span>S<span class="op">&gt;</span> <span class="cf">for</span> UserId <span class="op">{</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">type</span> Rejection <span class="op">=</span> Response<span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">async</span> <span class="kw">fn</span> from_request_parts(</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        parts<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> Parts<span class="op">,</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        state<span class="op">:</span> <span class="op">&amp;</span>S<span class="op">,</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">-&gt;</span> <span class="dt">Result</span><span class="op">&lt;</span><span class="dt">Self</span><span class="op">,</span> <span class="dt">Self</span><span class="pp">::</span>Rejection<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Path</span><span class="pp">::</span><span class="op">&lt;</span><span class="dt">u32</span><span class="op">&gt;</span><span class="pp">::</span>from_request_parts(parts<span class="op">,</span> state)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="kw">await</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>map(<span class="op">|</span>path<span class="op">|</span> <span class="dt">Self</span>(path<span class="op">.</span><span class="dv">0</span>))</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>map_err(<span class="op">|</span>err<span class="op">|</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>                (<span class="pp">StatusCode::</span>NOT_FOUND<span class="op">,</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>                    <span class="pp">format!</span>(<span class="st">&quot;user not found. reason: {err}&quot;</span>)<span class="op">,</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>                )<span class="op">.</span>into_response())</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><a
+href="https://docs.rs/axum/latest/axum/extract/trait.FromRequestParts.html">axum::extract::FromRequestParts</a></p>
+</div>
+<div id="global-state" class="slide section level1">
+<h1>Global State</h1>
+<p>Problem: I need to access database in my route handler</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> app <span class="op">=</span> <span class="pp">Router::</span>new()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>route(<span class="st">&quot;/&quot;</span><span class="op">,</span> get(index))</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>with_state(<span class="pp">PgPool::</span>new(<span class="op">...</span>))<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">// #[axum::debug_handler]</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> index(State(pg_pool)<span class="op">:</span> State<span class="op">&lt;</span>PgPool<span class="op">&gt;</span>) <span class="op">{</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// use pg_pool</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<ul>
+<li><a
+href="https://docs.rs/axum/latest/axum/extract/struct.State.html">axum::extract::State</a></li>
+<li>other examples: redis connection, configuration file, CA root of
+trust, …</li>
+<li>compile-time check that Router has the desired type of thing
+attached
+<ul>
+<li>we can add <a
+href="https://docs.rs/axum/latest/axum/attr.debug_handler.html">debug_handler</a>
+to prettify error messages</li>
+</ul></li>
+<li>alternative: <a
+href="https://docs.rs/axum/latest/axum/struct.Extension.html"><code>Extension</code></a>
+(no compile-time checks)</li>
+</ul>
+</div>
+<div id="middleware" class="slide section level1">
+<h1>Middleware</h1>
+<p>Problem: I have a single reusable piece of functionality which
+applies to multiple endpoints. How can I reuse it?</p>
+<p>Typical example: authentication via <a
+href="https://docs.rs/axum-login">axum-login</a></p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> app <span class="op">=</span> <span class="pp">Router::</span>new()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>route(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;/dashboard&quot;</span><span class="op">,</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        get(user_dashboard)<span class="op">,</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>route_layer(<span class="pp">login_required!</span>(Backend<span class="op">,</span> login_url <span class="op">=</span> <span class="st">&quot;/login&quot;</span>))<span class="op">;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> user_dashboard(auth_session<span class="op">:</span> AuthSession) <span class="op">-&gt;</span> Response <span class="op">{</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">match</span> auth_session<span class="op">.</span>user <span class="op">{</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        <span class="cn">Some</span>(user) <span class="op">=&gt;</span> DashboardTemplate <span class="op">{</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>            username<span class="op">:</span> <span class="op">&amp;</span>user<span class="op">.</span>username<span class="op">,</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span>into_response()<span class="op">,</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>        <span class="cn">None</span> <span class="op">=&gt;</span> <span class="pp">StatusCode::</span>UNAUTHORIZED<span class="op">.</span>into_response()<span class="op">,</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="observability" class="slide section level1">
+<h1>Observability</h1>
+<p>Problem: I want to instrument the HTTP requests &amp; responses using
+tracing</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="pp">tracing_subscriber::fmt::</span>init()<span class="op">;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> <span class="kw">mut</span> layer <span class="op">=</span> <span class="pp">ServiceBuilder::</span>new()</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>layer(</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="pp">TraceLayer::</span>new_for_http()</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>make_span_with(<span class="op">|</span>request<span class="op">:</span> <span class="op">&amp;</span>Request<span class="op">&lt;</span>Full<span class="op">&lt;</span>Bytes<span class="op">&gt;&gt;|</span> <span class="op">{</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                <span class="pp">tracing::info_span!</span>(<span class="st">&quot;HTTP request&quot;</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> app <span class="op">=</span> <span class="pp">Router::</span>new()</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>route(<span class="st">&quot;/&quot;</span><span class="op">,</span> get(hello_world))</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>layer(layer)<span class="op">;</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> hello_world() <span class="op">-&gt;</span> <span class="op">&amp;</span><span class="ot">&#39;static</span> <span class="dt">str</span> <span class="op">{</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Hello, World!&quot;</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="error-handling" class="slide section level1">
+<h1>Error Handling</h1>
+<p>Problem: Route handling isn’t always successful</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> MyError<span class="op">;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">fn</span> hello_world() <span class="op">-&gt;</span> <span class="dt">Result</span><span class="op">&lt;&amp;</span><span class="ot">&#39;static</span> <span class="dt">str</span><span class="op">,</span> MyError<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// we can now use `?` in the handler!</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="cn">Err</span>(MyError)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span> IntoResponse <span class="cf">for</span> MyError <span class="op">{</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> into_response(<span class="kw">self</span>) <span class="op">-&gt;</span> Response <span class="op">{</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        (<span class="pp">StatusCode::</span>BAD_REQUEST<span class="op">,</span> <span class="st">&quot;Bad Request&quot;</span>)<span class="op">.</span>into_response()</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div id="testing" class="slide section level1">
+<h1>Testing</h1>
+<p>Problem: I want to send a request to the web server without binding
+it to a port.</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode rust"><code class="sourceCode rust"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> create_router() <span class="op">-&gt;</span> Router <span class="op">{</span> <span class="pp">todo!</span>() <span class="op">}</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">#[</span><span class="pp">tokio::</span>test<span class="at">]</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">async</span> <span class="kw">fn</span> test() <span class="op">{</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> app <span class="op">=</span> create_router()<span class="op">;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> response <span class="op">=</span> app</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>oneshot(</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>                <span class="pp">Request::</span>builder()</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span>uri(<span class="st">&quot;/&quot;</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span>body(<span class="pp">Body::</span>empty())</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span>unwrap()</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="kw">await</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>unwrap()<span class="op">;</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        <span class="pp">assert_eq!</span>(response<span class="op">.</span>status()<span class="op">,</span> <span class="pp">StatusCode::</span>OK)<span class="op">;</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
+</div>
+<div id="more-resources" class="slide section level1">
+<h1>More resources</h1>
+<ul>
+<li><a href="https://www.arewewebyet.org/">Are We Web Yet?</a></li>
+<li><a href="https://docs.rs/axum">axum docs</a></li>
+<li><a href="https://github.com/tokio-rs/axum/tree/main/examples">axum
+examples</a></li>
+<li><a href="https://docs.rs/axum-login">axum login</a></li>
+</ul>
+</div>
+</body>
+</html>
