@@ -1,0 +1,18 @@
+ARG APP_NAME=lambda-demo
+ARG BASE_IMAGE=alpine:latest
+ARG BUILDER_IMAGE=ghcr.io/cargo-lambda/cargo-lambda
+
+FROM ${BUILDER_IMAGE} as builder
+ARG APP_NAME
+
+WORKDIR /usr/src/${APP_NAME}
+COPY ${APP_NAME} .
+
+# build the rust project
+RUN cargo lambda build --release
+
+### Minimal runtime image
+FROM ${BASE_IMAGE} as runtime
+ARG APP_NAME
+
+COPY --from=builder /usr/src/${APP_NAME}/target/lambda/${APP_NAME}/bootstrap /usr/local/bin/bootstrap
