@@ -1,5 +1,5 @@
-[![](https://img.shields.io/badge/%F0%9F%93%85%C4%8Fal%C5%A1%C3%AD%20meetup-16.4.2024-gold?style=for-the-badge)](https://www.meetup.com/bratislava-rust-meetup-group/events/299302952/)
-[![](https://img.shields.io/badge/🗺️miesto%20konania-Nivy%20Tower-green?style=for-the-badge)](https://maps.app.goo.gl/g8B4kzuakq32AZ54A)
+[![](https://img.shields.io/badge/%F0%9F%93%85%C4%8Fal%C5%A1%C3%AD%20meetup-23.9.2024-gold?style=for-the-badge)]([https://www.meetup.com/bratislava-rust-meetup-group/events/299302952/](https://www.meetup.com/bratislava-rust-meetup-group/events/302916594/?eventOrigin=group_events_list))
+[![](https://img.shields.io/badge/🗺️miesto%20konania-Spaceup%20coworking%20Záhradnícka-magenta?style=for-the-badge)](https://maps.app.goo.gl/oXqj8dPVpCXu9u1V8)
 [![](https://img.shields.io/badge/%E2%96%B6%EF%B8%8Fpredn%C3%A1%C5%A1ky-youtube-red?style=for-the-badge)](https://www.youtube.com/playlist?list=PLEg4051mgC8X0sZHaRZTgRsQinT53gRJZ)
 [![](https://img.shields.io/badge/📝eventy-meetup-orange?style=for-the-badge)](https://www.meetup.com/bratislava-rust-meetup-group/)
 
@@ -31,6 +31,18 @@ Radi si vypočujeme Váš názor!
 Budú ohlásené prostredníctvom platformy [Meetup](https://www.meetup.com/bratislava-rust-meetup-group/).
 
 ## Stretnutia
+
+### [23.9.2024 Rust Meetup by Sonalake #6](https://www.meetup.com/bratislava-rust-meetup-group/events/302916594/?eventOrigin=group_events_list)
+
+- Kde: [**Space-up coworking Záhradnícka**](https://maps.app.goo.gl/oXqj8dPVpCXu9u1V8)
+- Prezentácia: Error handling
+- Video: pripravujeme
+
+### [16.4.2024 Rust Meetup by Sonalake #5](https://www.meetup.com/bratislava-rust-meetup-group/events/299302952/?eventOrigin=group_events_list)
+
+- Kde: Nivy Tower, 6. poschodie
+- Prezentácia: [Introducing axum web framework](https://github.com/Rust-Slovakia/Bratislava-Rust-Meetup/tree/main/past_talks/2024-04-16-axum)
+- Video: [youtube](https://www.youtube.com/watch?v=BtI-cc0O2Lw)
 
 ### [07.11.2023 Rust Meetup by Sonalake](https://www.meetup.com/bratislava-rust-meetup-group/events/296809100/)
 
