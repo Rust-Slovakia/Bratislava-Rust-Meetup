@@ -1,0 +1,21 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "localhost:4317"
+
+exporters:
+  logging:
+  awsxray:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [awsxray]
+    metrics:
+      receivers: [otlp]
+      exporters: [logging]
+  telemetry:
+    metrics:
+      address: localhost:8888

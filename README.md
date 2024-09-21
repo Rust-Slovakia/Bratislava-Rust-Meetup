@@ -32,6 +32,11 @@ Budú ohlásené prostredníctvom platformy [Meetup](https://www.meetup.com/brat
 
 ## Stretnutia
 
+### [07.11.2023 Rust Meetup by Sonalake](https://www.meetup.com/bratislava-rust-meetup-group/events/296809100/)
+
+- Kde: Nivy Tower, 6. poschodie
+- Prezentácia: AWS Lambda functions in Rust.
+- Video: SK [youtube](https://www.youtube.com/watch?v=XW0BhoOutPg)
 
 ### [28.6.2023 Rust Meetup by Sonalake](https://www.meetup.com/bratislava-rust-meetup-group/events/293732916/)
 
