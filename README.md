@@ -35,7 +35,7 @@ Budú ohlásené prostredníctvom platformy [Meetup](https://www.meetup.com/brat
 ### [23.9.2024 Rust Meetup by Sonalake #6](https://www.meetup.com/bratislava-rust-meetup-group/events/302916594/?eventOrigin=group_events_list)
 
 - Kde: [**Space-up coworking Záhradnícka**](https://maps.app.goo.gl/oXqj8dPVpCXu9u1V8)
-- Prezentácia: [Error handling in Rust](https://github.com/Rust-Slovakia/Bratislava-Rust-Meetup/tree/main/past_talks/2024-09-23)
+- Prezentácia: [Error handling in Rust](https://github.com/Rust-Slovakia/Bratislava-Rust-Meetup/tree/main/past_talks/2024-09-23-error-handling)
 - Video: pripravujeme
 
 ### [16.4.2024 Rust Meetup by Sonalake #5](https://www.meetup.com/bratislava-rust-meetup-group/events/299302952/?eventOrigin=group_events_list)
